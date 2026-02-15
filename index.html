@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acadex | Dijital Akademik Portfolyo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1a2e;--ink-light:#4a4a6a;--ink-muted:#9090b0;
+  --paper:#f7f7f5;--white:#ffffff;
+  --accent:#2d6a4f;--accent-light:#e8f5f0;--accent-mid:#52b788;
+  --border:#e2e2ea;--border-light:#eeeeF4;
+  --danger:#e05252;--danger-light:#ffeaea;
+  --gold:#c9a84c;--gold-light:#fdf6e3;
+  --shadow:0 2px 16px rgba(26,26,46,.07);
+  --shadow-lg:0 8px 40px rgba(26,26,46,.13);
+  --r:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* ── SCREENS ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(247,247,245,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:0 36px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);cursor:pointer;user-select:none}
+.nav-logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-light)}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.nav-btn{padding:7px 15px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;border:none}
+.nav-btn.ghost{background:none;color:var(--ink-light)}
+.nav-btn.ghost:hover{background:var(--accent-light);color:var(--accent)}
+.nav-btn.solid{background:var(--ink);color:white}
+.nav-btn.solid:hover{background:var(--accent)}
+
+/* ── HERO ── */
+#screen-hero{background:var(--paper)}
+.hero-wrap{max-width:860px;margin:0 auto;padding:90px 36px 70px;text-align:center}
+.hero-badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:28px}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);line-height:1.13;letter-spacing:-.02em;margin-bottom:18px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{font-size:1.05rem;color:var(--ink-light);max-width:520px;margin:0 auto 38px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero-primary{padding:13px 30px;background:var(--ink);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.btn-hero-primary:hover{background:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn-hero-secondary{padding:13px 28px;background:none;color:var(--ink);border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-hero-secondary:hover{border-color:var(--ink);background:white}
+.hero-features{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-top:60px;padding-top:40px;border-top:1px solid var(--border)}
+.feat{text-align:center}
+.feat-icon{font-size:1.8rem;margin-bottom:8px}
+.feat-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.feat-desc{font-size:12px;color:var(--ink-muted)}
+
+/* ── AUTH MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,.45);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:16px;padding:36px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);transform:translateY(20px) scale(.97);transition:transform .25s;position:relative}
+.modal-overlay.open .modal{transform:none}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;color:var(--ink-muted);cursor:pointer;border-radius:5px;padding:2px 6px;transition:background .15s}
+.modal-close:hover{background:var(--border-light)}
+.modal-logo{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);margin-bottom:4px}
+.modal-logo span{color:var(--accent)}
+.modal-subtitle{font-size:13px;color:var(--ink-muted);margin-bottom:28px}
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-size:12px;font-weight:600;color:var(--ink-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.form-field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;background:var(--paper)}
+.form-field input:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(82,183,136,.12);background:white}
+.form-error{font-size:12px;color:var(--danger);margin-top:5px;display:none}
+.form-error.show{display:block}
+.btn-auth{width:100%;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .18s;margin-top:4px}
+.btn-auth:hover{background:var(--ink)}
+.auth-switch{text-align:center;margin-top:18px;font-size:13px;color:var(--ink-muted)}
+.auth-switch a{color:var(--accent);font-weight:500;cursor:pointer;text-decoration:none}
+.auth-switch a:hover{text-decoration:underline}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--ink-muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── DASHBOARD ── */
+#screen-dashboard{background:var(--paper)}
+.dash-wrap{max-width:1100px;margin:0 auto;padding:36px 28px}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px}
+.dash-greeting{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink)}
+.dash-greeting span{color:var(--accent)}
+.dash-tabs{display:flex;gap:4px;background:white;border:1px solid var(--border);border-radius:8px;padding:4px}
+.dash-tab{padding:8px 18px;border-radius:6px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-light);cursor:pointer;transition:all .15s}
+.dash-tab.active{background:var(--ink);color:white}
+.dash-content{display:none}
+.dash-content.active{display:block}
+
+/* ── CV BUILDER TAB ── */
+.builder-layout{display:grid;grid-template-columns:330px 1fr;gap:24px;align-items:start}
+.sidebar{display:flex;flex-direction:column;gap:10px}
+
+/* panels */
+.panel{background:white;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:border-color .15s}
+.panel.drag-over{border-color:var(--accent);background:var(--accent-light)}
+.panel.dragging{opacity:.45;border:2px dashed var(--accent-mid)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid transparent;cursor:pointer;user-select:none;transition:background .15s}
+.panel-header:hover{background:#fafafa}
+.panel.open .panel-header{border-bottom-color:var(--border)}
+.panel-left{display:flex;align-items:center;gap:9px}
+.drag-handle{cursor:grab;color:var(--ink-muted);font-size:17px;opacity:.35;transition:opacity .15s;padding:2px}
+.drag-handle:hover{opacity:.8}
+.p-icon{width:26px;height:26px;border-radius:6px;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.p-title{font-size:13px;font-weight:600}
+.p-chev{font-size:11px;color:var(--ink-muted);transition:transform .2s}
+.panel.open .p-chev{transform:rotate(180deg)}
+.panel-body{padding:16px;display:none}
+.panel.open .panel-body{display:block}
+
+.field-group{margin-bottom:14px}
+.field-group:last-child{margin-bottom:0}
+.field-group label{display:block;font-size:11px;font-weight:600;color:var(--ink-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.field-group input,.field-group textarea,.field-group select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:all .15s;background:var(--paper);resize:vertical}
+.field-group input:focus,.field-group textarea:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(82,183,136,.1);background:white}
+.field-group textarea{min-height:68px}
+
+/* entries */
+.entry-card{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:9px}
+.entry-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.entry-card-label{font-size:12px;font-weight:600;color:var(--ink-light)}
+.entry-remove{background:none;border:none;cursor:pointer;color:var(--ink-muted);font-size:16px;padding:1px 5px;border-radius:4px;transition:all .15s}
+.entry-remove:hover{background:var(--danger-light);color:var(--danger)}
+.add-btn{width:100%;padding:9px;border:1.5px dashed var(--border);border-radius:7px;background:none;cursor:pointer;color:var(--ink-muted);font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.add-btn:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+
+/* skills */
+.skills-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.skill-tag{display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.skill-tag button{background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;opacity:.6;padding:0;line-height:1}
+.skill-tag button:hover{opacity:1}
+.skill-row{display:flex;gap:7px}
+.skill-row input{flex:1}
+.skill-add{padding:9px 14px;background:var(--accent);color:white;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;transition:background .15s;white-space:nowrap}
+.skill-add:hover{background:var(--ink)}
+
+/* template picker */
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tpl-card{border:2px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .18s;aspect-ratio:.7}
+.tpl-card:hover{border-color:var(--accent-mid)}
+.tpl-card.sel{border-color:var(--accent)}
+.tpl-thumb{flex:1;padding:7px;font-size:0;display:flex;flex-direction:column;gap:2px}
+.th{height:2px;border-radius:1px;background:#ddd;margin-bottom:1px}
+.th.dk{background:#aaa;width:70%}
+.th.hd{height:16px;background:#1a1a2e;margin-bottom:5px}
+.th.gr{background:#2d6a4f;width:100%;height:100%}
+.th.gld{background:#c9a84c;height:3px;margin-bottom:6px}
+.th.gldtxt{background:#c9a84c;width:50%}
+.tpl-lbl{padding:5px 6px;font-size:10px;font-weight:600;text-align:center;color:var(--ink-muted);border-top:1px solid var(--border)}
+.tpl-card.sel .tpl-lbl{color:var(--accent)}
+
+/* ── PREVIEW ── */
+.preview-area{position:sticky;top:80px;height:calc(100vh - 100px);display:flex;flex-direction:column;background:white;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.preview-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+.preview-label{font-size:12px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em}
+.preview-actions{display:flex;gap:7px}
+.btn-sm{padding:7px 13px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;border:none}
+.btn-sm.outline{background:none;border:1.5px solid var(--border);color:var(--ink-light)}
+.btn-sm.outline:hover{border-color:var(--ink);color:var(--ink)}
+.btn-sm.primary{background:var(--accent);color:white}
+.btn-sm.primary:hover{background:var(--ink)}
+.preview-scroll{flex:1;overflow-y:auto;background:#dcdce4;padding:28px;display:flex;justify-content:center}
+.cv-doc{width:595px;min-height:842px;background:white;box-shadow:0 4px 28px rgba(0,0,0,.18);flex-shrink:0;overflow:hidden;font-size:10px;line-height:1.5;color:#1a1a2e}
+.empty-hint{color:#bbb;font-style:italic;font-size:9px;padding:3px 0}
+
+/* ── CV TEMPLATES ── */
+/* T1 Classic */
+.t1 .cv-hd{background:#1a1a2e;color:white;padding:28px 30px 22px}
+.t1 .cv-nm{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:3px}
+.t1 .cv-tg{font-size:10px;color:rgba(255,255,255,.6);margin-bottom:9px}
+.t1 .cv-ct{display:flex;flex-wrap:wrap;gap:14px;font-size:8.5px;color:rgba(255,255,255,.7)}
+.t1 .cv-body{padding:20px 30px;display:flex;flex-direction:column;gap:14px}
+.t1 .cv-sec-t{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2d6a4f;border-bottom:1.5px solid #2d6a4f;padding-bottom:3px;margin-bottom:9px}
+.t1 .cv-entry{margin-bottom:9px}
+.t1 .cv-eh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px}
+.t1 .cv-et{font-size:11px;font-weight:600}
+.t1 .cv-ed{font-size:8.5px;color:#8888aa}
+.t1 .cv-es{font-size:9.5px;color:#4a4a6a;margin-bottom:2px}
+.t1 .cv-edesc{font-size:9px;color:#4a4a6a}
+.t1 .cv-skills{display:flex;flex-wrap:wrap;gap:4px}
+.t1 .cv-sk{background:#e8f5f0;color:#2d6a4f;padding:2px 8px;border-radius:20px;font-size:8.5px;font-weight:500}
+.t1 .cv-certs{display:flex;flex-direction:column;gap:4px}
+.t1 .cv-cert{display:flex;align-items:center;gap:6px;font-size:9px;color:#4a4a6a;padding:4px 8px;background:#f5f5fb;border-radius:4px;border-left:2px solid #2d6a4f}
+
+/* T2 Modern */
+.t2{display:grid;grid-template-columns:155px 1fr}
+.t2 .cv-side{background:#2d6a4f;color:white;padding:22px 15px;min-height:842px}
+.t2 .cv-main{padding:22px 22px}
+.t2 .cv-nm{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:2px}
+.t2 .cv-tg{font-size:8.5px;color:rgba(255,255,255,.65);margin-bottom:14px}
+.t2 .cv-side-sec{margin-bottom:15px}
+.t2 .cv-side-t{font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.18)}
+.t2 .cv-ct-i{font-size:8px;color:rgba(255,255,255,.78);margin-bottom:3px;word-break:break-all}
+.t2 .cv-sk-i{font-size:8.5px;color:rgba(255,255,255,.82);margin-bottom:2px}
+.t2 .cv-sk-i::before{content:'— '}
+.t2 .cv-cert-i{font-size:8px;color:rgba(255,255,255,.78);margin-bottom:3px;display:flex;align-items:center;gap:4px}
+.t2 .cv-sec-t{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2d6a4f;margin-bottom:8px;padding-bottom:3px;border-bottom:1.5px solid #2d6a4f}
+.t2 .cv-entry{margin-bottom:10px}
+.t2 .cv-eh{display:flex;justify-content:space-between;margin-bottom:1px}
+.t2 .cv-et{font-size:11px;font-weight:600}
+.t2 .cv-ed{font-size:8.5px;color:#8888aa}
+.t2 .cv-es{font-size:9.5px;color:#4a4a6a;margin-bottom:2px}
+.t2 .cv-edesc{font-size:9px;color:#4a4a6a}
+
+/* T3 Elegant */
+.t3{padding:30px;background:#fffef7}
+.t3 .cv-hd{text-align:center;margin-bottom:14px;padding-bottom:14px;border-bottom:2px solid #c9a84c}
+.t3 .cv-nm{font-family:'DM Serif Display',serif;font-size:23px;font-style:italic;color:#1a1a2e;margin-bottom:3px}
+.t3 .cv-tg{font-size:9.5px;color:#8a7a5a;letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px}
+.t3 .cv-ct{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;font-size:8.5px;color:#6a6a8a}
+.t3 .cv-sec-t{font-family:'DM Serif Display',serif;font-size:13px;color:#c9a84c;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.t3 .cv-sec-t::after{content:'';flex:1;height:1px;background:#e8d8a0}
+.t3 .cv-section{margin-bottom:14px}
+.t3 .cv-entry{margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #f0e8d0}
+.t3 .cv-entry:last-child{border-bottom:none;margin-bottom:0}
+.t3 .cv-eh{display:flex;justify-content:space-between;margin-bottom:1px}
+.t3 .cv-et{font-size:11px;font-weight:600}
+.t3 .cv-ed{font-size:8.5px;color:#c9a84c;font-style:italic}
+.t3 .cv-es{font-size:9.5px;color:#6a6a8a;font-style:italic;margin-bottom:2px}
+.t3 .cv-edesc{font-size:9px;color:#4a4a6a}
+.t3 .cv-skills{display:flex;flex-wrap:wrap;gap:4px}
+.t3 .cv-sk{background:#f5eed0;color:#8a7040;padding:2px 8px;border-radius:2px;font-size:8.5px;border:1px solid #e8d8a0}
+.t3 .cv-cert{display:flex;align-items:center;gap:5px;font-size:9px;color:#6a6a5a;margin-bottom:4px}
+
+/* ── CERTIFICATES TAB ── */
+.certs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.certs-title{font-family:'DM Serif Display',serif;font-size:1.3rem}
+.cert-upload-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:24px;background:white}
+.cert-upload-zone:hover,.cert-upload-zone.dragover{border-color:var(--accent-mid);background:var(--accent-light)}
+.upload-icon{font-size:2.2rem;margin-bottom:12px}
+.upload-title{font-size:15px;font-weight:600;margin-bottom:5px}
+.upload-desc{font-size:13px;color:var(--ink-muted)}
+.upload-desc span{color:var(--accent);font-weight:500;cursor:pointer}
+#cert-file-input{display:none}
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.cert-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .2s}
+.cert-card:hover{box-shadow:var(--shadow-lg)}
+.cert-card-thumb{height:140px;background:linear-gradient(135deg,var(--accent-light),#d0ede4);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.cert-card-thumb img{width:100%;height:100%;object-fit:cover}
+.cert-card-thumb .cert-file-icon{font-size:3rem;opacity:.6}
+.cert-card-body{padding:14px}
+.cert-card-name{font-size:13px;font-weight:600;margin-bottom:3px;word-break:break-word}
+.cert-card-meta{font-size:11px;color:var(--ink-muted);margin-bottom:10px}
+.cert-card-actions{display:flex;gap:7px}
+.cert-btn{flex:1;padding:7px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;border:none;text-align:center}
+.cert-btn.view{background:var(--accent-light);color:var(--accent)}
+.cert-btn.view:hover{background:var(--accent);color:white}
+.cert-btn.del{background:var(--danger-light);color:var(--danger)}
+.cert-btn.del:hover{background:var(--danger);color:white}
+.cert-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;margin-bottom:8px}
+.no-certs{text-align:center;padding:60px 20px;color:var(--ink-muted)}
+.no-certs-icon{font-size:3rem;margin-bottom:14px;opacity:.4}
+.no-certs-text{font-size:14px;font-weight:500}
+
+/* ── PROFILE TAB ── */
+.profile-card{background:white;border:1px solid var(--border);border-radius:12px;padding:28px;max-width:560px;box-shadow:var(--shadow)}
+.profile-avatar-area{display:flex;align-items:center;gap:18px;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.profile-avatar-big{width:64px;height:64px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;font-family:'DM Serif Display',serif;flex-shrink:0}
+.profile-name-big{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:2px}
+.profile-email-big{font-size:13px;color:var(--ink-muted)}
+.btn-danger{padding:10px 20px;background:var(--danger-light);color:var(--danger);border:1px solid #f0b0b0;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;margin-top:20px}
+.btn-danger:hover{background:var(--danger);color:white}
+
+/* ── FILE PREVIEW MODAL ── */
+.file-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:none;align-items:center;justify-content:center}
+.file-modal-overlay.open{display:flex}
+.file-modal{background:white;border-radius:12px;width:90vw;max-width:700px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
+.file-modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.file-modal-title{font-size:14px;font-weight:600}
+.file-modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-muted);border-radius:5px;padding:2px 6px}
+.file-modal-close:hover{background:var(--border-light)}
+.file-modal-body{flex:1;overflow:auto;padding:20px;display:flex;align-items:center;justify-content:center}
+.file-modal-body img{max-width:100%;max-height:60vh;border-radius:6px}
+.file-modal-body iframe{width:100%;height:60vh;border:none;border-radius:6px}
+.file-modal-body .file-no-preview{text-align:center;padding:40px;color:var(--ink-muted)}
+.file-modal-body .file-no-preview-icon{font-size:3rem;margin-bottom:12px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--ink);color:white;padding:12px 20px;border-radius:9px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:none;opacity:1}
+.toast.success{background:var(--accent)}
+.toast.error{background:var(--danger)}
+
+/* ── PRINT ── */
+@media print{
+  nav,#screen-hero,#screen-dashboard .dash-header,.dash-tabs,.preview-bar,.sidebar,
+  .cert-upload-zone,.cert-grid,.profile-card,.dash-content:not(#tab-builder).active,
+  #tab-builder .sidebar{display:none!important}
+  .builder-layout{grid-template-columns:1fr!important}
+  .preview-area{border:none;box-shadow:none;position:static;height:auto}
+  .preview-scroll{background:white;padding:0}
+  .cv-doc{box-shadow:none;width:100%}
+}
+
+/* ── ADMIN PANEL ── */
+#screen-admin{background:var(--paper)}
+.admin-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 62px)}
+
+/* sidebar nav */
+.admin-nav{background:var(--ink);padding:28px 0;display:flex;flex-direction:column}
+.admin-nav-logo{padding:0 20px 24px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px}
+.admin-nav-logo-text{font-family:'DM Serif Display',serif;font-size:1rem;color:white}
+.admin-nav-logo-badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:1px}
+.admin-nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.admin-nav-item:hover{background:rgba(255,255,255,.07);color:white}
+.admin-nav-item.active{background:rgba(255,255,255,.12);color:white;border-left:3px solid var(--accent-mid)}
+.admin-nav-item .nav-icon{font-size:15px;width:20px;text-align:center}
+.admin-nav-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.admin-exit-btn{width:100%;padding:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:7px;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.admin-exit-btn:hover{background:rgba(255,255,255,.15);color:white}
+
+/* main content */
+.admin-main{padding:36px 40px;overflow-y:auto}
+.admin-page{display:none}
+.admin-page.active{display:block}
+.admin-page-title{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:6px}
+.admin-page-sub{font-size:13px;color:var(--ink-muted);margin-bottom:32px}
+
+/* section cards */
+.admin-section{background:white;border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:var(--shadow)}
+.admin-section-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.admin-section-desc{font-size:12px;color:var(--ink-muted);margin-bottom:20px}
+.admin-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.admin-row.triple{grid-template-columns:1fr 1fr 1fr}
+.admin-row.full{grid-template-columns:1fr}
+.admin-field{display:flex;flex-direction:column;gap:6px}
+.admin-field label{font-size:11px;font-weight:700;color:var(--ink-light);text-transform:uppercase;letter-spacing:.05em}
+.admin-field input,.admin-field select,.admin-field textarea{padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:all .15s;background:var(--paper)}
+.admin-field input:focus,.admin-field select:focus,.admin-field textarea:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(82,183,136,.1);background:white}
+.admin-field textarea{min-height:72px;resize:vertical}
+.admin-field-hint{font-size:11px;color:var(--ink-muted);margin-top:3px}
+
+/* color picker row */
+.color-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.color-field{display:flex;flex-direction:column;gap:6px}
+.color-field label{font-size:11px;font-weight:700;color:var(--ink-light);text-transform:uppercase;letter-spacing:.05em}
+.color-input-wrap{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--paper);cursor:pointer;transition:border-color .15s}
+.color-input-wrap:focus-within{border-color:var(--accent-mid)}
+.color-swatch{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,0,0,.1);flex-shrink:0;cursor:pointer}
+.color-input-wrap input[type=color]{opacity:0;width:0;height:0;position:absolute}
+.color-hex{font-size:12px;font-family:monospace;color:var(--ink);flex:1}
+
+/* preset palettes */
+.palette-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.palette{display:flex;gap:3px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .18s;align-items:center}
+.palette:hover{border-color:var(--accent-mid)}
+.palette.active-pal{border-color:var(--accent)}
+.pal-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
+.pal-name{font-size:11px;font-weight:600;color:var(--ink-light);margin-left:5px}
+
+/* toggle switch */
+.toggle-list{display:flex;flex-direction:column;gap:10px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--paper);border:1px solid var(--border);border-radius:8px}
+.toggle-info{display:flex;flex-direction:column;gap:2px}
+.toggle-label{font-size:13px;font-weight:500;color:var(--ink)}
+.toggle-sub{font-size:11px;color:var(--ink-muted)}
+.switch{position:relative;width:38px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:22px;cursor:pointer;transition:.3s}
+.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider{background:var(--accent)}
+.switch input:checked+.slider::before{transform:translateX(16px)}
+
+/* save button */
+.admin-save-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:white;border:1px solid var(--border);border-radius:10px;margin-top:8px;box-shadow:var(--shadow)}
+.admin-save-info{font-size:12px;color:var(--ink-muted)}
+.admin-save-btn{padding:10px 24px;background:var(--accent);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .18s;display:flex;align-items:center;gap:7px}
+.admin-save-btn:hover{background:var(--ink)}
+
+/* preview card */
+.site-preview-card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.site-preview-bar{background:#f0f0f0;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+.preview-dot{width:10px;height:10px;border-radius:50%}
+.site-preview-frame{padding:20px;min-height:160px;display:flex;flex-direction:column;gap:10px}
+.preview-nav-mock{height:36px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px}
+.preview-nav-logo{font-family:'DM Serif Display',serif;font-size:13px}
+.preview-nav-btns{display:flex;gap:5px}
+.preview-nav-btn{padding:4px 10px;border-radius:4px;font-size:9px;font-weight:600}
+.preview-hero-mock{text-align:center;padding:14px}
+.preview-badge-mock{display:inline-block;font-size:8px;font-weight:700;padding:3px 9px;border-radius:12px;margin-bottom:7px}
+.preview-h1-mock{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:5px}
+.preview-p-mock{font-size:9px;color:#888;max-width:260px;margin:0 auto}
+
+/* users tab */
+.users-table{width:100%;border-collapse:collapse;font-size:13px}
+.users-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);border-bottom:2px solid var(--border);background:var(--paper)}
+.users-table td{padding:12px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.users-table tr:hover td{background:#fafafa}
+.user-avatar-sm{width:28px;height:28px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.user-cell{display:flex;align-items:center;gap:10px}
+.status-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px}
+.status-badge.active{background:var(--accent-light);color:var(--accent)}
+.admin-del-btn{padding:5px 11px;background:var(--danger-light);color:var(--danger);border:none;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .15s}
+.admin-del-btn:hover{background:var(--danger);color:white}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:white;border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--shadow);text-align:center}
+.stat-num{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--accent);line-height:1}
+.stat-label{font-size:12px;color:var(--ink-muted);margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="nav-logo" onclick="goHome()">Aca<span>dex</span></div>
+  <div class="nav-right" id="nav-right">
+    <button class="nav-btn ghost" onclick="openModal('login')">Giriş Yap</button>
+    <button class="nav-btn solid" onclick="openModal('register')">Kayıt Ol</button>
+  </div>
+</nav>
+
+<!-- ═══ ADMIN SCREEN ═══ -->
+<div class="screen" id="screen-admin">
+  <div class="admin-layout">
+
+    <!-- Admin Sidebar Nav -->
+    <div class="admin-nav">
+      <div class="admin-nav-logo">
+        <div class="admin-nav-logo-text">Aca<span style="color:var(--accent-mid)">dex</span></div>
+        <div class="admin-nav-logo-badge">⚙️ Yönetici Paneli</div>
+      </div>
+      <button class="admin-nav-item active" onclick="adminPage('genel')"><span class="nav-icon">🏠</span> Genel Bakış</button>
+      <button class="admin-nav-item" onclick="adminPage('site')"><span class="nav-icon">🎨</span> Site Ayarları</button>
+      <button class="admin-nav-item" onclick="adminPage('renkler')"><span class="nav-icon">🖌️</span> Renk & Tema</button>
+      <button class="admin-nav-item" onclick="adminPage('bolumler')"><span class="nav-icon">📋</span> Bölümler</button>
+      <button class="admin-nav-item" onclick="adminPage('kullanicilar')"><span class="nav-icon">👥</span> Kullanıcılar</button>
+      <div class="admin-nav-bottom">
+        <button class="admin-exit-btn" onclick="exitAdmin()">← Siteye Geri Dön</button>
+      </div>
+    </div>
+
+    <!-- Admin Main Content -->
+    <div class="admin-main">
+
+      <!-- PAGE: GENEL BAKIŞ -->
+      <div class="admin-page active" id="apage-genel">
+        <div class="admin-page-title">Genel Bakış</div>
+        <div class="admin-page-sub">Sitenizin anlık durumu</div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="stat-users">0</div><div class="stat-label">Kayıtlı Öğrenci</div></div>
+          <div class="stat-card"><div class="stat-num" id="stat-certs">0</div><div class="stat-label">Yüklenen Sertifika</div></div>
+          <div class="stat-card"><div class="stat-num" id="stat-cvs">0</div><div class="stat-label">Oluşturulan CV</div></div>
+        </div>
+        <div class="admin-section">
+          <div class="admin-section-title">📢 Hoş Geldiniz!</div>
+          <div class="admin-section-desc">Bu panelden sitenizi kod yazmadan düzenleyebilirsiniz. Sol menüden istediğiniz bölüme girin, değişiklik yapın ve "Kaydet" butonuna basın. Değişiklikler anında siteye yansır.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="padding:14px;background:var(--accent-light);border-radius:8px;font-size:13px"><strong>🎨 Site Ayarları</strong><br><span style="color:var(--ink-muted);font-size:12px">Site adı, slogan, buton yazıları</span></div>
+            <div style="padding:14px;background:#fff3cd;border-radius:8px;font-size:13px"><strong>🖌️ Renk & Tema</strong><br><span style="color:var(--ink-muted);font-size:12px">Ana renk, hazır paletler</span></div>
+            <div style="padding:14px;background:#e8f4ff;border-radius:8px;font-size:13px"><strong>📋 Bölümler</strong><br><span style="color:var(--ink-muted);font-size:12px">CV bölümlerini aç/kapat, yeniden adlandır</span></div>
+            <div style="padding:14px;background:#fce8ff;border-radius:8px;font-size:13px"><strong>👥 Kullanıcılar</strong><br><span style="color:var(--ink-muted);font-size:12px">Kayıtlı öğrencileri görüntüle</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: SİTE AYARLARI -->
+      <div class="admin-page" id="apage-site">
+        <div class="admin-page-title">Site Ayarları</div>
+        <div class="admin-page-sub">Site adı, metinler ve görünür içerikleri buradan düzenleyin</div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">🏷️ Site Kimliği</div>
+          <div class="admin-section-desc">Sitenin adı ve kısa açıklaması — tarayıcı sekmesinde ve navigasyon çubuğunda görünür.</div>
+          <div class="admin-row">
+            <div class="admin-field">
+              <label>Site Adı (1. Kısım)</label>
+              <input id="cfg-name1" value="Aca" oninput="livePreviewUpdate()">
+              <div class="admin-field-hint">Örn: "Aca" — koyu renkte görünür</div>
+            </div>
+            <div class="admin-field">
+              <label>Site Adı (2. Kısım)</label>
+              <input id="cfg-name2" value="dex" oninput="livePreviewUpdate()">
+              <div class="admin-field-hint">Örn: "dex" — vurgu rengiyle görünür</div>
+            </div>
+          </div>
+          <div class="admin-row full" style="margin-top:14px">
+            <div class="admin-field">
+              <label>Tarayıcı Sekmesi Başlığı</label>
+              <input id="cfg-tab-title" value="Acadex | Dijital Akademik Portfolyo" oninput="document.title=this.value">
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">🦸 Ana Sayfa (Hero) Metinleri</div>
+          <div class="admin-section-desc">Ziyaretçilerin gördüğü ilk sayfa içerikleri.</div>
+          <div class="admin-row full">
+            <div class="admin-field">
+              <label>Üst Etiket (Badge)</label>
+              <input id="cfg-badge" value="✦ ÖĞRENCİNİN DİJİTAL KARİYER PLATFORMU" oninput="livePreviewUpdate()">
+            </div>
+          </div>
+          <div class="admin-row full" style="margin-top:12px">
+            <div class="admin-field">
+              <label>Ana Başlık (1. Satır)</label>
+              <input id="cfg-h1a" value="Kariyerini" oninput="livePreviewUpdate()">
+            </div>
+          </div>
+          <div class="admin-row full" style="margin-top:12px">
+            <div class="admin-field">
+              <label>Ana Başlık (2. Satır — italik vurgu)</label>
+              <input id="cfg-h1b" value="şimdiden inşa et." oninput="livePreviewUpdate()">
+            </div>
+          </div>
+          <div class="admin-row full" style="margin-top:12px">
+            <div class="admin-field">
+              <label>Alt Açıklama</label>
+              <textarea id="cfg-hero-p">Başarılarını, sertifikalarını, yeteneklerini ve projelerini tek bir güvenli alanda depola. Geleceğini planlarken akademik kimliğini profesyonel şekilde sun.</textarea>
+            </div>
+          </div>
+          <div class="admin-row" style="margin-top:12px">
+            <div class="admin-field">
+              <label>Birincil Buton Yazısı</label>
+              <input id="cfg-btn1" value="Ücretsiz Başla →">
+            </div>
+            <div class="admin-field">
+              <label>İkincil Buton Yazısı</label>
+              <input id="cfg-btn2" value="Giriş Yap">
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">✨ Özellik Kartları</div>
+          <div class="admin-section-desc">Ana sayfada altta görünen 4 özellik kutucuğu.</div>
+          <div id="features-editor"></div>
+        </div>
+
+        <!-- Canlı Önizleme -->
+        <div class="admin-section">
+          <div class="admin-section-title">👁️ Canlı Önizleme</div>
+          <div class="admin-section-desc">Değişikliklerinizin yansıması — kaydetmeden önce kontrol edin.</div>
+          <div class="site-preview-card">
+            <div class="site-preview-bar">
+              <div class="preview-dot" style="background:#ff5f57"></div>
+              <div class="preview-dot" style="background:#ffbd2e"></div>
+              <div class="preview-dot" style="background:#28c940"></div>
+              <div style="flex:1;background:white;border-radius:4px;height:18px;margin-left:8px;display:flex;align-items:center;padding:0 8px;font-size:9px;color:#999">acadex.com</div>
+            </div>
+            <div class="site-preview-frame" id="site-live-preview">
+              <div class="preview-nav-mock" id="prev-nav" style="background:#1a1a2e">
+                <div class="preview-nav-logo" id="prev-logo" style="color:white">Aca<span style="color:var(--accent)">dex</span></div>
+                <div class="preview-nav-btns">
+                  <div class="preview-nav-btn" style="background:rgba(255,255,255,.1);color:white">Giriş</div>
+                  <div class="preview-nav-btn" id="prev-btn1-badge" style="background:var(--accent);color:white">Kayıt Ol</div>
+                </div>
+              </div>
+              <div class="preview-hero-mock">
+                <div class="preview-badge-mock" id="prev-badge" style="background:var(--accent-light);color:var(--accent)">✦ Üniversite CV</div>
+                <div class="preview-h1-mock" id="prev-h1">Kariyerini<br><em style="color:var(--accent)">şimdiden inşa et.</em></div>
+                <div class="preview-p-mock" id="prev-p">CV'ni oluştur ve başvurunu hazır et.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-save-bar">
+          <span class="admin-save-info">Değişiklikler tarayıcıda saklanır</span>
+          <button class="admin-save-btn" onclick="saveAdminSettings()">💾 Değişiklikleri Kaydet</button>
+        </div>
+      </div>
+
+      <!-- PAGE: RENKLER -->
+      <div class="admin-page" id="apage-renkler">
+        <div class="admin-page-title">Renk & Tema</div>
+        <div class="admin-page-sub">Sitenin renk paletini hazır temalardan seçin veya kendiniz özelleştirin</div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">🎨 Hazır Renk Paletleri</div>
+          <div class="admin-section-desc">Bir palete tıklayarak tüm renkleri tek seferde uygulayın.</div>
+          <div class="palette-row" id="palette-row"></div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">🔧 Özel Renk Ayarları</div>
+          <div class="admin-section-desc">Seçilen palet üzerinde ince ayar yapın veya sıfırdan belirleyin.</div>
+          <div class="color-row">
+            <div class="color-field">
+              <label>Ana Renk</label>
+              <div class="color-input-wrap" onclick="document.getElementById('cp-accent').click()">
+                <div class="color-swatch" id="sw-accent" style="background:#2d6a4f"></div>
+                <span class="color-hex" id="hex-accent">#2d6a4f</span>
+                <input type="color" id="cp-accent" value="#2d6a4f" oninput="applyColor('accent',this.value)">
+              </div>
+            </div>
+            <div class="color-field">
+              <label>Yazı Rengi</label>
+              <div class="color-input-wrap" onclick="document.getElementById('cp-ink').click()">
+                <div class="color-swatch" id="sw-ink" style="background:#1a1a2e"></div>
+                <span class="color-hex" id="hex-ink">#1a1a2e</span>
+                <input type="color" id="cp-ink" value="#1a1a2e" oninput="applyColor('ink',this.value)">
+              </div>
+            </div>
+            <div class="color-field">
+              <label>Arkaplan</label>
+              <div class="color-input-wrap" onclick="document.getElementById('cp-paper').click()">
+                <div class="color-swatch" id="sw-paper" style="background:#f7f7f5"></div>
+                <span class="color-hex" id="hex-paper">#f7f7f5</span>
+                <input type="color" id="cp-paper" value="#f7f7f5" oninput="applyColor('paper',this.value)">
+              </div>
+            </div>
+            <div class="color-field">
+              <label>Vurgu (Açık)</label>
+              <div class="color-input-wrap" onclick="document.getElementById('cp-mid').click()">
+                <div class="color-swatch" id="sw-mid" style="background:#52b788"></div>
+                <span class="color-hex" id="hex-mid">#52b788</span>
+                <input type="color" id="cp-mid" value="#52b788" oninput="applyColor('mid',this.value)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-save-bar">
+          <span class="admin-save-info">Renkler tüm sayfaya anında uygulanır</span>
+          <button class="admin-save-btn" onclick="saveAdminSettings()">💾 Renkleri Kaydet</button>
+        </div>
+      </div>
+
+      <!-- PAGE: BÖLÜMLER -->
+      <div class="admin-page" id="apage-bolumler">
+        <div class="admin-page-title">CV Bölümleri</div>
+        <div class="admin-page-sub">Hangi bölümlerin görüneceğini ve isimlerini ayarlayın</div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">👁️ Bölüm Görünürlüğü & İsimleri</div>
+          <div class="admin-section-desc">Kapatılan bölümler CV oluşturucuda görünmez.</div>
+          <div class="toggle-list" id="section-toggles"></div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-title">📝 Alan Adları</div>
+          <div class="admin-section-desc">Kişisel bilgiler formundaki alan etiketlerini özelleştirin.</div>
+          <div class="admin-row triple">
+            <div class="admin-field"><label>Ad Soyad Etiketi</label><input id="lbl-name" value="Ad Soyad"></div>
+            <div class="admin-field"><label>E-posta Etiketi</label><input id="lbl-email" value="E-posta"></div>
+            <div class="admin-field"><label>Telefon Etiketi</label><input id="lbl-phone" value="Telefon"></div>
+            <div class="admin-field"><label>Şehir Etiketi</label><input id="lbl-loc" value="Şehir"></div>
+            <div class="admin-field"><label>Web / LinkedIn</label><input id="lbl-web" value="LinkedIn / Web sitesi"></div>
+            <div class="admin-field"><label>Kişisel İfade</label><input id="lbl-stmt" value="Kişisel İfade"></div>
+            <div class="admin-field"><label>Okul</label><input id="lbl-school" value="Okul"></div>
+          </div>
+        </div>
+
+        <div class="admin-save-bar">
+          <span class="admin-save-info">Bölüm ayarları anında CV oluşturucuya yansır</span>
+          <button class="admin-save-btn" onclick="saveAdminSettings()">💾 Bölümleri Kaydet</button>
+        </div>
+      </div>
+
+      <!-- PAGE: KULLANICILAR -->
+      <div class="admin-page" id="apage-kullanicilar">
+        <div class="admin-page-title">Kullanıcılar</div>
+        <div class="admin-page-sub">Kayıtlı öğrencileri görüntüleyin ve yönetin</div>
+        <div class="admin-section">
+          <div class="admin-section-title">👥 Kayıtlı Öğrenciler</div>
+          <div class="admin-section-desc">Tüm hesaplar ve durumları aşağıda listelenmiştir.</div>
+          <div style="overflow-x:auto">
+            <table class="users-table" id="users-table">
+              <thead><tr>
+                <th>Öğrenci</th>
+                <th>E-posta</th>
+                <th>Okul</th>
+                <th>Sertifika</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+              </tr></thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-main -->
+  </div><!-- /admin-layout -->
+</div><!-- /screen-admin -->
+
+<!-- ═══ SCREENS ═══ -->
+
+<!-- HERO -->
+<div class="screen active" id="screen-hero">
+  <div class="hero-wrap">
+    <div class="hero-badge">✦ ÖĞRENCİNİN DİJİTAL KARİYER PLATFORMU</div>
+    <div class="hero">
+      <h1>Kariyerini<br><em>şimdiden inşa et.</em></h1>
+      <p>Başarılarını, sertifikalarını, yeteneklerini ve projelerini tek bir güvenli alanda depola. Geleceğini planlarken akademik kimliğini profesyonel şekilde sun.</p>
+      <div class="hero-btns">
+        <button class="btn-hero-primary" onclick="openModal('register')">Ücretsiz Başla →</button>
+        <button class="btn-hero-secondary" onclick="openModal('login')">Giriş Yap</button>
+      </div>
+    </div>
+    <div class="hero-features">
+      <div class="feat"><div class="feat-icon">📝</div><div class="feat-title">Canlı CV Oluşturucu</div><div class="feat-desc">Doldurdukça anlık önizleme</div></div>
+      <div class="feat"><div class="feat-icon">🎨</div><div class="feat-title">3 Profesyonel Tema</div><div class="feat-desc">Classic, Modern, Elegant</div></div>
+      <div class="feat"><div class="feat-icon">📜</div><div class="feat-title">Sertifika Yönetimi</div><div class="feat-desc">PDF & görsel dosya yükleme</div></div>
+      <div class="feat"><div class="feat-icon">⬇️</div><div class="feat-title">PDF İndir</div><div class="feat-desc">Tek tıkla hazır belge</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="screen-dashboard">
+  <div class="dash-wrap">
+    <div class="dash-header">
+      <div class="dash-greeting">Merhaba, <span id="greeting-name">Öğrenci</span> 👋</div>
+      <div class="dash-tabs">
+        <button class="dash-tab active" onclick="switchTab('builder')">📝 CV Oluşturucu</button>
+        <button class="dash-tab" onclick="switchTab('certs')">📜 Sertifikalarım</button>
+        <button class="dash-tab" onclick="switchTab('profile')">👤 Profil</button>
+      </div>
+    </div>
+
+    <!-- TAB: CV BUILDER -->
+    <div class="dash-content active" id="tab-builder">
+      <div class="builder-layout">
+        <div class="sidebar" id="sections-list">
+
+          <!-- Template -->
+          <div class="panel open" id="panel-template">
+            <div class="panel-header" onclick="toggleP('template')">
+              <div class="panel-left"><div class="p-icon">◈</div><span class="p-title">Tema Seç</span></div>
+              <span class="p-chev">▾</span>
+            </div>
+            <div class="panel-body">
+              <div class="tpl-grid">
+                <div class="tpl-card sel" id="tc1" onclick="selTpl(1)">
+                  <div class="tpl-thumb" style="display:flex;flex-direction:column;padding:0">
+                    <div class="th hd" style="margin-bottom:6px"></div>
+                    <div style="padding:5px"><div class="th dk"></div><div class="th"></div><div class="th"></div></div>
+                  </div>
+                  <div class="tpl-lbl">Classic</div>
+                </div>
+                <div class="tpl-card" id="tc2" onclick="selTpl(2)">
+                  <div class="tpl-thumb" style="padding:0;display:flex">
+                    <div style="width:32%;background:#2d6a4f;padding:5px"><div class="th" style="background:rgba(255,255,255,.4)"></div><div class="th" style="background:rgba(255,255,255,.25)"></div></div>
+                    <div style="flex:1;padding:5px"><div class="th dk"></div><div class="th"></div><div class="th"></div></div>
+                  </div>
+                  <div class="tpl-lbl">Modern</div>
+                </div>
+                <div class="tpl-card" id="tc3" onclick="selTpl(3)">
+                  <div class="tpl-thumb" style="background:#fffef7">
+                    <div class="th gld"></div>
+                    <div class="th gldtxt" style="margin:0 auto 3px"></div>
+                    <div class="th" style="width:35%;margin:0 auto 6px"></div>
+                    <div class="th gldtxt"></div><div class="th"></div><div class="th"></div>
+                  </div>
+                  <div class="tpl-lbl">Elegant</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal -->
+          <div class="panel open" id="panel-personal" draggable="true" data-sec="personal">
+            <div class="panel-header" onclick="toggleP('personal')">
+              <div class="panel-left"><span class="drag-handle">⠿</span><div class="p-icon">👤</div><span class="p-title">Kişisel Bilgiler</span></div>
+              <span class="p-chev">▾</span>
+            </div>
+            <div class="panel-body">
+              <div class="field-group"><label>Ad Soyad</label><input id="f-name" placeholder="Ayşe Yılmaz" oninput="rp()"></div>
+              <div class="field-group"><label>Hedef Unvan / Bölüm</label><input id="f-title" placeholder="Bilgisayar Mühendisliği Adayı" oninput="rp()"></div>
+              <div class="field-group"><label>E-posta</label><input id="f-email" type="email" placeholder="ayse@email.com" oninput="rp()"></div>
+              <div class="field-group"><label>Telefon</label><input id="f-phone" placeholder="+90 555 000 0000" oninput="rp()"></div>
+              <div class="field-group"><label>Şehir</label><input id="f-loc" placeholder="İstanbul, Türkiye" oninput="rp()"></div>
+              <div class="field-group"><label>LinkedIn / Web sitesi</label><input id="f-web" placeholder="linkedin.com/in/ayseyilmaz" oninput="rp()"></div>
+              <div class="field-group"><label>Kişisel İfade</label><textarea id="f-stmt" placeholder="Hedeflerinizi ve güçlü yönlerinizi kısaca açıklayın..." oninput="rp()"></textarea></div>
+              <div class="field-group"><label>Okul</label><input id="f-school" placeholder="Galatasaray Lisesi" oninput="rp()"></div>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div class="panel" id="panel-education" draggable="true" data-sec="education">
+            <div class="panel-header" onclick="toggleP('education')">
+              <div class="panel-left"><span class="drag-handle">⠿</span><div class="p-icon">🎓</div><span class="p-title">Eğitim</span></div>
+              <span class="p-chev">▾</span>
+            </div>
+            <div class="panel-body">
+              <div id="entries-education"></div>
+              <button class="add-btn" onclick="addEntry('education')">+ Eğitim Ekle</button>
+            </div>
+          </div>
+
+          <!-- Experience -->
+          <div class="panel" id="panel-experience" draggable="true" data-sec="experience">
+            <div class="panel-header" onclick="toggleP('experience')">
+              <div class="panel-left"><span class="drag-handle">⠿</span><div class="p-icon">💼</div><span class="p-title">İş Deneyimi</span></div>
+              <span class="p-chev">▾</span>
+            </div>
+            <div class="panel-body">
+              <div id="entries-experience"></div>
+              <button class="add-btn" onclick="addEntry('experience')">+ Deneyim Ekle</button>
+            </div>
+          </div>
+
+          <!-- Skills -->
+          <div class="panel" id="panel-skills" draggable="true" data-sec="skills">
+            <div class="panel-header" onclick="toggleP('skills')">
+              <div class="panel-left"><span class="drag-handle">⠿</span><div class="p-icon">⚡</div><span class="p-title">Yetenekler</span></div>
+              <span class="p-chev">▾</span>
+            </div>
+            <div class="panel-body">
+              <div class="skills-tags" id="skills-tags"></div>
+              <div class="skill-row">
+                <input id="skill-inp" placeholder="ör. Python, İngilizce, Excel" onkeydown="if(event.key==='Enter')addSkill()">
+                <button class="skill-add" onclick="addSkill()">Ekle</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activities -->
+          <div class="panel" id="panel-activities" draggable="true" data-sec="activities">
+            <div class="panel-header" onclick="toggleP('activities')">
+              <div class="panel-left"><span class="drag-handle">⠿</span><div class="p-icon">🏆</div><span class="p-title">Aktivite & Ödüller</span></div>
+              <span class="p-chev">▾</span>
+            </div>
+            <div class="panel-body">
+              <div id="entries-activities"></div>
+              <button class="add-btn" onclick="addEntry('activities')">+ Aktivite Ekle</button>
+            </div>
+          </div>
+
+        </div><!-- /sidebar -->
+
+        <!-- PREVIEW -->
+        <div class="preview-area">
+          <div class="preview-bar">
+            <span class="preview-label">Canlı Önizleme</span>
+            <div class="preview-actions">
+              <button class="btn-sm outline" onclick="window.print()">🖨️ Yazdır</button>
+              <button class="btn-sm primary" onclick="downloadCV()">⬇️ PDF İndir</button>
+            </div>
+          </div>
+          <div class="preview-scroll"><div class="cv-doc t1" id="cv-preview"></div></div>
+        </div>
+      </div>
+    </div><!-- /tab-builder -->
+
+    <!-- TAB: CERTIFICATES -->
+    <div class="dash-content" id="tab-certs">
+      <div class="certs-header">
+        <div class="certs-title">Sertifikalarım</div>
+        <button class="btn-sm primary" onclick="document.getElementById('cert-file-input').click()">+ Sertifika Yükle</button>
+      </div>
+      <input type="file" id="cert-file-input" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple>
+      <div class="cert-upload-zone" id="cert-drop-zone" onclick="document.getElementById('cert-file-input').click()">
+        <div class="upload-icon">📁</div>
+        <div class="upload-title">Sertifika veya belge yükle</div>
+        <div class="upload-desc">Dosyayı buraya sürükle ya da <span>bilgisayardan seç</span></div>
+        <div style="font-size:11px;color:var(--ink-muted);margin-top:8px">PDF, JPG, PNG desteklenir • Maks. 10MB</div>
+      </div>
+      <div class="cert-grid" id="cert-grid">
+        <div class="no-certs" id="no-certs" style="grid-column:1/-1">
+          <div class="no-certs-icon">📂</div>
+          <div class="no-certs-text">Henüz sertifika yüklenmedi</div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-top:6px">Diplomaların, kursların ve ödüllerinin belgelerini buraya ekle</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: PROFILE -->
+    <div class="dash-content" id="tab-profile">
+      <div class="profile-card">
+        <div class="profile-avatar-area">
+          <div class="profile-avatar-big" id="prof-avatar">A</div>
+          <div>
+            <div class="profile-name-big" id="prof-name">Ad Soyad</div>
+            <div class="profile-email-big" id="prof-email">email@ornek.com</div>
+            <div style="font-size:11px;color:var(--accent);margin-top:4px;font-weight:500">✓ Aktif Üye</div>
+          </div>
+        </div>
+        <div class="field-group"><label>Ad Soyad</label><input id="prof-name-inp" placeholder="Ad Soyad" oninput="updateProfilePreview()"></div>
+        <div class="field-group"><label>E-posta</label><input id="prof-email-inp" type="email" placeholder="email@ornek.com" disabled style="opacity:.6;cursor:not-allowed"></div>
+        <div class="field-group"><label>Okul / Kurum</label><input id="prof-school" placeholder="Boğaziçi Üniversitesi"></div>
+        <div class="field-group"><label>Bölüm</label><input id="prof-dept" placeholder="Bilgisayar Mühendisliği"></div>
+        <div class="field-group"><label>Sınıf</label>
+          <select id="prof-year">
+            <option value="">Seçiniz</option>
+            <option>Lise - 9. Sınıf</option><option>Lise - 10. Sınıf</option>
+            <option>Lise - 11. Sınıf</option><option>Lise - 12. Sınıf</option>
+            <option>5. Sınıf</option><option>6. Sınıf</option>
+            <option>7. Sınıf</option><option>8. Sınıf</option>
+          </select>
+        </div>
+        <button class="btn-sm primary" style="width:100%;margin-top:6px" onclick="saveProfile()">💾 Profili Kaydet</button>
+        <button class="btn-danger" onclick="logout()">Çıkış Yap</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="modal-login" onclick="closeModalOut(event,'login')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">×</button>
+    <div class="modal-logo">Aca<span>dex</span></div>
+    <div class="modal-subtitle">Hesabına giriş yap</div>
+    <div class="form-field"><label>E-posta</label><input id="login-email" type="email" placeholder="email@ornek.com"></div>
+    <div class="form-field">
+      <label>Şifre</label>
+      <input id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="form-error" id="login-err">E-posta veya şifre hatalı.</div>
+    </div>
+    <button class="btn-auth" onclick="doLogin()">Giriş Yap</button>
+    <div class="auth-switch">Hesabın yok mu? <a onclick="switchModal('login','register')">Kayıt ol</a></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal-overlay" id="modal-register" onclick="closeModalOut(event,'register')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register')">×</button>
+    <div class="modal-logo">Aca<span>dex</span></div>
+    <div class="modal-subtitle">Ücretsiz hesap oluştur</div>
+    <div class="form-field"><label>Ad Soyad</label><input id="reg-name" type="text" placeholder="Ayşe Yılmaz"></div>
+    <div class="form-field"><label>E-posta</label><input id="reg-email" type="email" placeholder="email@ornek.com"></div>
+    <div class="form-field">
+      <label>Şifre</label>
+      <input id="reg-pass" type="password" placeholder="En az 6 karakter">
+      <div class="form-error" id="reg-err">Lütfen tüm alanları doldurun (şifre en az 6 karakter).</div>
+    </div>
+    <div class="form-field">
+      <label>Şifre Tekrar</label>
+      <input id="reg-pass2" type="password" placeholder="Şifreyi tekrar girin" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="form-error" id="reg-err2">Şifreler eşleşmiyor.</div>
+    </div>
+    <button class="btn-auth" onclick="doRegister()">Kayıt Ol</button>
+    <div class="auth-switch">Zaten hesabın var mı? <a onclick="switchModal('register','login')">Giriş yap</a></div>
+  </div>
+</div>
+
+<!-- FILE PREVIEW -->
+<div class="file-modal-overlay" id="file-modal">
+  <div class="file-modal">
+    <div class="file-modal-head">
+      <span class="file-modal-title" id="file-modal-title">Dosya</span>
+      <button class="file-modal-close" onclick="closeFileModal()">×</button>
+    </div>
+    <div class="file-modal-body" id="file-modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toast-msg">✓ Kaydedildi</span></div>
+
+<script>
+// ═══════════════════════════════════
+// ADMIN CONFIG — Buraya kendi e-postanı yaz!
+// ═══════════════════════════════════
+const ADMIN_EMAIL = 'cankayarda11@gmail.com';
+
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let currentUser = null;
+let users = JSON.parse(localStorage.getItem('cc_users') || '{}');
+let cvData = {};
+let certs = [];
+let skills = [];
+let entries = {education:[],experience:[],activities:[]};
+let secOrder = ['personal','education','experience','skills','activities'];
+let currentTpl = 1;
+let entryId = 0;
+
+// ═══════════════════════════════════
+// AUTH
+// ═══════════════════════════════════
+function openModal(id){document.getElementById('modal-'+id).classList.add('open')}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open')}
+function closeModalOut(e,id){if(e.target===e.currentTarget)closeModal(id)}
+function switchModal(from,to){closeModal(from);openModal(to)}
+
+function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass=document.getElementById('reg-pass').value;
+  const pass2=document.getElementById('reg-pass2').value;
+  document.getElementById('reg-err').classList.remove('show');
+  document.getElementById('reg-err2').classList.remove('show');
+  if(!name||!email||pass.length<6){document.getElementById('reg-err').classList.add('show');return}
+  if(pass!==pass2){document.getElementById('reg-err2').classList.add('show');return}
+  if(users[email]){document.getElementById('reg-err').textContent='Bu e-posta zaten kayıtlı.';document.getElementById('reg-err').classList.add('show');return}
+  users[email]={name,email,pass,school:'',dept:'',year:'',cvData:{},certs:[],skills:[],entries:{education:[],experience:[],activities:[]},secOrder:['personal','education','experience','skills','activities'],tpl:1};
+  localStorage.setItem('cc_users',JSON.stringify(users));
+  closeModal('register');
+  loginAs(email);
+  showToast('🎉 Hoş geldin, '+name+'!','success');
+}
+
+function doLogin(){
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value;
+  document.getElementById('login-err').classList.remove('show');
+  if(!users[email]||users[email].pass!==pass){document.getElementById('login-err').classList.add('show');return}
+  closeModal('login');
+  loginAs(email);
+  showToast('Hoş geldin! 👋','success');
+}
+
+function loginAs(email){
+  currentUser=email;
+  const u=users[email];
+  // load user data
+  cvData=u.cvData||{};
+  certs=u.certs||[];
+  skills=u.skills||[];
+  entries=u.entries||{education:[],experience:[],activities:[]};
+  secOrder=u.secOrder||['personal','education','experience','skills','activities'];
+  currentTpl=u.tpl||1;
+
+  // update nav
+  const isAdm = email === ADMIN_EMAIL;
+  document.getElementById('nav-right').innerHTML=`
+    <div class="nav-user">
+      <div class="nav-avatar">${u.name.charAt(0).toUpperCase()}</div>
+      <span>${u.name.split(' ')[0]}</span>
+    </div>
+    ${isAdm ? `<button class="nav-btn ghost" onclick="showScreen('admin');loadAdminData()" style="color:var(--accent);font-weight:600">⚙️ Yönetici</button>` : ''}
+    <button class="nav-btn ghost" onclick="logout()">Çıkış</button>`;
+
+  document.getElementById('greeting-name').textContent=u.name.split(' ')[0];
+  document.getElementById('prof-name').textContent=u.name;
+  document.getElementById('prof-email').textContent=u.email;
+  document.getElementById('prof-avatar').textContent=u.name.charAt(0).toUpperCase();
+  document.getElementById('prof-name-inp').value=u.name;
+  document.getElementById('prof-email-inp').value=u.email;
+  document.getElementById('prof-school').value=u.school||'';
+  document.getElementById('prof-dept').value=u.dept||'';
+  document.getElementById('prof-year').value=u.year||'';
+
+  // restore cv fields
+  Object.keys(cvData).forEach(id=>{const el=document.getElementById(id);if(el)el.value=cvData[id]||''});
+
+  // restore skills
+  renderSkillTags();
+
+  // restore entries
+  ['education','experience','activities'].forEach(type=>{
+    document.getElementById('entries-'+type).innerHTML='';
+    (entries[type]||[]).forEach(e=>renderEntryCard(type,e));
+  });
+
+  // restore template
+  selTpl(currentTpl);
+
+  // restore section order
+  restoreSectionOrder();
+
+  // render certs
+  renderCerts();
+
+  // show dashboard
+  showScreen('dashboard');
+  rp();
+}
+
+function logout(){
+  saveUserData();
+  currentUser=null;
+  skills=[];entries={education:[],experience:[],activities:[]};cvData={};certs=[];
+  document.getElementById('nav-right').innerHTML=`
+    <button class="nav-btn ghost" onclick="openModal('login')">Giriş Yap</button>
+    <button class="nav-btn solid" onclick="openModal('register')">Kayıt Ol</button>`;
+  showScreen('hero');
+  showToast('Güvenli çıkış yapıldı.');
+}
+
+function saveUserData(){
+  if(!currentUser)return;
+  // collect cv fields
+  ['f-name','f-title','f-email','f-phone','f-loc','f-web','f-stmt'].forEach(id=>{
+    const el=document.getElementById(id);if(el)cvData[id]=el.value;
+  });
+  users[currentUser].cvData=cvData;
+  users[currentUser].certs=certs;
+  users[currentUser].skills=skills;
+  users[currentUser].entries=entries;
+  users[currentUser].secOrder=secOrder;
+  users[currentUser].tpl=currentTpl;
+  localStorage.setItem('cc_users',JSON.stringify(users));
+}
+
+// ═══════════════════════════════════
+// SCREEN / TAB NAV
+// ═══════════════════════════════════
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+}
+function goHome(){if(currentUser)showScreen('dashboard');else showScreen('hero')}
+function switchTab(name){
+  document.querySelectorAll('.dash-tab').forEach((t,i)=>t.classList.toggle('active',['builder','certs','profile'][i]===name));
+  document.querySelectorAll('.dash-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='builder')rp();
+  if(name==='certs')renderCerts();
+}
+
+// ═══════════════════════════════════
+// PANEL / DRAG
+// ═══════════════════════════════════
+function toggleP(id){
+  const panel=document.getElementById('panel-'+id);
+  panel.classList.toggle('open');
+}
+function restoreSectionOrder(){
+  const list=document.getElementById('sections-list');
+  const tplPanel=document.getElementById('panel-template');
+  secOrder.forEach(sec=>{
+    const p=document.getElementById('panel-'+sec);
+    if(p)list.appendChild(p);
+  });
+}
+
+let dragSrc=null;
+document.addEventListener('DOMContentLoaded',()=>{
+  // ── Admin ayarlarını EN ÖNCE uygula ──
+  adminSettings = JSON.parse(localStorage.getItem('cc_admin') || '{}');
+  applyAdminSettings();
+
+  initDrag();
+  addEntry('education');
+  rp();
+
+  // cert drop
+  const dz=document.getElementById('cert-drop-zone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');handleCertFiles(e.dataTransfer.files)});
+  document.getElementById('cert-file-input').addEventListener('change',e=>handleCertFiles(e.target.files));
+});
+
+function initDrag(){
+  document.querySelectorAll('.panel[draggable]').forEach(p=>{
+    p.addEventListener('dragstart',e=>{dragSrc=p;p.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
+    p.addEventListener('dragend',()=>{p.classList.remove('dragging');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('drag-over'))});
+    p.addEventListener('dragover',e=>{e.preventDefault();if(p!==dragSrc)p.classList.add('drag-over')});
+    p.addEventListener('dragleave',()=>p.classList.remove('drag-over'));
+    p.addEventListener('drop',e=>{
+      e.preventDefault();p.classList.remove('drag-over');
+      if(dragSrc&&dragSrc!==p){
+        const list=document.getElementById('sections-list');
+        const all=[...list.querySelectorAll('.panel[draggable]')];
+        if(all.indexOf(dragSrc)<all.indexOf(p))p.after(dragSrc);else p.before(dragSrc);
+        secOrder=[...document.querySelectorAll('.panel[draggable]')].map(x=>x.dataset.sec);
+        rp();
+      }
+    });
+  });
+}
+
+// ═══════════════════════════════════
+// TEMPLATE
+// ═══════════════════════════════════
+function selTpl(n){
+  currentTpl=n;
+  [1,2,3].forEach(i=>document.getElementById('tc'+i).classList.toggle('sel',i===n));
+  rp();
+}
+
+// ═══════════════════════════════════
+// ENTRIES
+// ═══════════════════════════════════
+function addEntry(type){
+  const id=++entryId;
+  const entry={id,title:'',sub:'',date:'',desc:''};
+  entries[type].push(entry);
+  renderEntryCard(type,entry);
+  rp();
+}
+function renderEntryCard(type,entry){
+  const id=entry.id;
+  const isEdu=type==='education',isAct=type==='activities';
+  const labels=isEdu
+    ?['Okul / Kurum','Bölüm / Program','Tarih Aralığı','Detaylar (Not, dersler...)']
+    :isAct
+    ?['Aktivite / Ödül Adı','Organizasyon','Tarih','Açıklama']
+    :['Pozisyon / Görev','Şirket / Kurum','Tarih Aralığı','Sorumluluklar ve başarılar'];
+  const phs=isEdu
+    ?['Boğaziçi Üniversitesi','Bilgisayar Mühendisliği','Eyl 2021 – Haz 2025','Onur öğrencisi, ilgili dersler...']
+    :isAct
+    ?['Ulusal Matematik Olimpiyatı','TÜBİTAK','2023','Türkiye geneli 1. lik...']
+    :['Yazılım Stajyeri','Google','Haz 2023 – Ağu 2023','10K+ kullanıcıya dokunan özellikler geliştirdim...'];
+  const container=document.getElementById('entries-'+type);
+  const div=document.createElement('div');
+  div.className='entry-card';div.id='ec-'+type+'-'+id;
+  div.innerHTML=`<div class="entry-card-head"><span class="entry-card-label">${isEdu?'Eğitim':isAct?'Aktivite':'Deneyim'} ${entries[type].indexOf(entry)+1}</span><button class="entry-remove" onclick="removeEntry('${type}',${id})">✕</button></div>
+  <div class="field-group"><label>${labels[0]}</label><input placeholder="${phs[0]}" value="${entry.title||''}" oninput="setEntry('${type}',${id},'title',this.value)"></div>
+  <div class="field-group"><label>${labels[1]}</label><input placeholder="${phs[1]}" value="${entry.sub||''}" oninput="setEntry('${type}',${id},'sub',this.value)"></div>
+  <div class="field-group"><label>${labels[2]}</label><input placeholder="${phs[2]}" value="${entry.date||''}" oninput="setEntry('${type}',${id},'date',this.value)"></div>
+  <div class="field-group"><label>${labels[3]}</label><textarea placeholder="${phs[3]}" oninput="setEntry('${type}',${id},'desc',this.value)">${entry.desc||''}</textarea></div>`;
+  container.appendChild(div);
+}
+function removeEntry(type,id){
+  entries[type]=entries[type].filter(e=>e.id!==id);
+  document.getElementById('ec-'+type+'-'+id)?.remove();rp();
+}
+function setEntry(type,id,field,val){
+  const e=entries[type].find(e=>e.id===id);if(e){e[field]=val;rp();}
+}
+
+// ═══════════════════════════════════
+// SKILLS
+// ═══════════════════════════════════
+function addSkill(){
+  const inp=document.getElementById('skill-inp');
+  const val=inp.value.trim();if(!val)return;
+  val.split(',').forEach(s=>{const t=s.trim();if(t&&!skills.includes(t))skills.push(t)});
+  inp.value='';renderSkillTags();rp();
+}
+function removeSkill(s){skills=skills.filter(x=>x!==s);renderSkillTags();rp();}
+function renderSkillTags(){
+  document.getElementById('skills-tags').innerHTML=skills.map(s=>
+    `<span class="skill-tag">${s}<button onclick="removeSkill('${s.replace(/'/g,"\\'")}')">×</button></span>`).join('');
+}
+
+// ═══════════════════════════════════
+// CERTIFICATES
+// ═══════════════════════════════════
+function handleCertFiles(files){
+  if(!files||!files.length)return;
+  let count=0;
+  Array.from(files).forEach(file=>{
+    if(file.size>10*1024*1024){showToast('⚠️ '+file.name+' 10MB limitini aşıyor','error');return;}
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const cert={id:Date.now()+Math.random(),name:file.name,type:file.type,size:file.size,data:e.target.result,date:new Date().toLocaleDateString('tr-TR')};
+      certs.push(cert);
+      count++;
+      if(count===files.length){
+        renderCerts();
+        saveUserData();
+        showToast('✓ '+count+' sertifika yüklendi','success');
+        rp();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('cert-file-input').value='';
+}
+
+function renderCerts(){
+  const grid=document.getElementById('cert-grid');
+  const noCerts=document.getElementById('no-certs');
+  if(!certs.length){grid.innerHTML='';grid.appendChild(noCerts);noCerts.style.display='block';return;}
+  noCerts.style.display='none';
+  grid.innerHTML='';
+  certs.forEach(cert=>{
+    const isImg=cert.type.startsWith('image/');
+    const isPdf=cert.type==='application/pdf';
+    const sizeKb=(cert.size/1024).toFixed(0);
+    const card=document.createElement('div');
+    card.className='cert-card';
+    card.innerHTML=`
+      <div class="cert-card-thumb">
+        ${isImg?`<img src="${cert.data}" alt="${cert.name}">`:`<div class="cert-file-icon">${isPdf?'📄':'📎'}</div>`}
+      </div>
+      <div class="cert-card-body">
+        <div class="cert-badge">${isPdf?'PDF':isImg?'Görsel':'Dosya'}</div>
+        <div class="cert-card-name">${cert.name}</div>
+        <div class="cert-card-meta">${cert.date} • ${sizeKb} KB</div>
+        <div class="cert-card-actions">
+          <button class="cert-btn view" onclick="previewCert('${cert.id}')">👁️ Görüntüle</button>
+          <button class="cert-btn del" onclick="deleteCert('${cert.id}')">🗑️ Sil</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function previewCert(id){
+  const cert=certs.find(c=>c.id==id);if(!cert)return;
+  document.getElementById('file-modal-title').textContent=cert.name;
+  const body=document.getElementById('file-modal-body');
+  if(cert.type.startsWith('image/')){
+    body.innerHTML=`<img src="${cert.data}" alt="${cert.name}">`;
+  }else if(cert.type==='application/pdf'){
+    body.innerHTML=`<iframe src="${cert.data}"></iframe>`;
+  }else{
+    body.innerHTML=`<div class="file-no-preview"><div class="file-no-preview-icon">📎</div><div>Bu dosya önizlenemiyor.</div><div style="font-size:12px;margin-top:6px;color:var(--ink-muted)">${cert.name}</div></div>`;
+  }
+  document.getElementById('file-modal').classList.add('open');
+}
+function closeFileModal(){document.getElementById('file-modal').classList.remove('open')}
+document.getElementById('file-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeFileModal()});
+
+function deleteCert(id){
+  certs=certs.filter(c=>c.id!=id);
+  renderCerts();saveUserData();rp();
+  showToast('Sertifika silindi.');
+}
+
+// ═══════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════
+function updateProfilePreview(){
+  const n=document.getElementById('prof-name-inp').value||'?';
+  document.getElementById('prof-avatar').textContent=n.charAt(0).toUpperCase();
+  document.getElementById('prof-name').textContent=n;
+}
+function saveProfile(){
+  if(!currentUser)return;
+  users[currentUser].name=document.getElementById('prof-name-inp').value||users[currentUser].name;
+  users[currentUser].school=document.getElementById('prof-school').value;
+  users[currentUser].dept=document.getElementById('prof-dept').value;
+  users[currentUser].year=document.getElementById('prof-year').value;
+  localStorage.setItem('cc_users',JSON.stringify(users));
+  document.getElementById('greeting-name').textContent=users[currentUser].name.split(' ')[0];
+  showToast('✓ Profil kaydedildi','success');
+}
+
+// ═══════════════════════════════════
+// PREVIEW RENDER
+// ═══════════════════════════════════
+function gv(id){return(document.getElementById(id)?.value||'').trim()}
+function rp(){
+  saveUserData();
+  const prev=document.getElementById('cv-preview');
+  prev.className='cv-doc t'+currentTpl;
+  const name=gv('f-name')||'Adınız Soyadınız';
+  const title=gv('f-title');
+  const email=gv('f-email');const phone=gv('f-phone');
+  const loc=gv('f-loc');const web=gv('f-web');
+  const stmt=gv('f-stmt');
+  const school=gv('f-school')
+  const contacts=[email,phone,loc,web].filter(Boolean);
+  const certList=certs.slice(0,5);
+
+  if(currentTpl===1)prev.innerHTML=tpl1HTML(name,title,contacts,stmt,certList);
+  else if(currentTpl===2)prev.innerHTML=tpl2HTML(name,title,contacts,stmt,certList);
+  else prev.innerHTML=tpl3HTML(name,title,contacts,stmt,certList);
+}
+
+function renderEntriesHTML(type,cls){
+  return entries[type].map(e=>`
+    <div class="${cls}-entry">
+      <div class="${cls}-eh"><span class="${cls}-et">${e.title||'<em style="opacity:.3">—</em>'}</span><span class="${cls}-ed">${e.date||''}</span></div>
+      ${e.sub?`<div class="${cls}-es">${e.sub}</div>`:''}
+      ${e.desc?`<div class="${cls}-edesc">${e.desc}</div>`:''}
+    </div>`).join('')||'<div class="empty-hint">Henüz eklenmedi</div>';
+}
+
+function certLineHTML(certs,cls){
+  if(!certs.length)return'';
+  if(cls==='t1'){
+    return certs.map(c=>`<div class="t1-cv-cert"><span>📜</span>${c.name}</div>`).join('');
+  }
+  if(cls==='t2-side'){
+    return certs.map(c=>`<div class="t2 cv-cert-i"><span>📜</span>${c.name}</div>`).join('');
+  }
+  return certs.map(c=>`<div class="t3 cv-cert"><span>📜</span>${c.name}</div>`).join('');
+}
+
+function tpl1HTML(name,title,contacts,stmt,certList){
+  const sections=secOrder.map(sec=>{
+    if(sec==='personal')return stmt?`<div class="t1-cv-sec"><div class="t1 cv-sec-t">Profil</div><div class="t1 cv-edesc">${stmt}</div></div>`:'';
+    if(sec==='education')return`<div class="t1-cv-sec"><div class="t1 cv-sec-t">Eğitim</div>${renderEntriesHTML('education','t1')}</div>`;
+    if(sec==='experience')return`<div class="t1-cv-sec"><div class="t1 cv-sec-t">İş Deneyimi</div>${renderEntriesHTML('experience','t1')}</div>`;
+    if(sec==='skills')return skills.length?`<div class="t1-cv-sec"><div class="t1 cv-sec-t">Yetenekler</div><div class="t1 cv-skills">${skills.map(s=>`<span class="t1 cv-sk">${s}</span>`).join('')}</div></div>`:'';
+    if(sec==='activities')return`<div class="t1-cv-sec"><div class="t1 cv-sec-t">Aktivite & Ödüller</div>${renderEntriesHTML('activities','t1')}</div>`;
+    return'';
+  }).join('');
+  const certSec=certList.length?`<div class="t1-cv-sec"><div class="t1 cv-sec-t">Sertifikalar</div><div class="t1 cv-certs">${certList.map(c=>`<div class="t1 cv-cert"><span>📜</span>${c.name}</div>`).join('')}</div></div>`:'';
+  return`
+    <div class="t1 cv-hd">
+      <div class="t1 cv-nm">${name}</div>
+      ${title?`<div class="t1 cv-tg">${title}</div>`:''}
+      <div class="t1 cv-ct">${contacts.map(c=>`<span>${c}</span>`).join('')}</div>
+    </div>
+    <div class="t1 cv-body">${sections}${certSec}</div>`;
+}
+
+function tpl2HTML(name,title,contacts,stmt,certList){
+  const sideCerts=certList.length?`<div class="t2 cv-side-sec"><div class="t2 cv-side-t">Sertifikalar</div>${certList.map(c=>`<div class="t2 cv-cert-i"><span>📜</span>${c.name}</div>`).join('')}</div>`:'';
+  const sideSkills=skills.length?`<div class="t2 cv-side-sec"><div class="t2 cv-side-t">Yetenekler</div>${skills.map(s=>`<div class="t2 cv-sk-i">${s}</div>`).join('')}</div>`:'';
+  const main=secOrder.filter(s=>s!=='skills').map(sec=>{
+    if(sec==='personal')return stmt?`<div><div class="t2 cv-sec-t">Profil</div><div class="t2 cv-edesc">${stmt}</div></div>`:'';
+    if(sec==='education')return`<div><div class="t2 cv-sec-t">Eğitim</div>${renderEntriesHTML('education','t2')}</div>`;
+    if(sec==='experience')return`<div><div class="t2 cv-sec-t">İş Deneyimi</div>${renderEntriesHTML('experience','t2')}</div>`;
+    if(sec==='activities')return`<div><div class="t2 cv-sec-t">Aktivite & Ödüller</div>${renderEntriesHTML('activities','t2')}</div>`;
+    return'';
+  }).join('');
+  return`
+    <div class="t2 cv-side">
+      <div class="t2 cv-nm">${name}</div>
+      ${title?`<div class="t2 cv-tg">${title}</div>`:''}
+      <div class="t2 cv-side-sec"><div class="t2 cv-side-t">İletişim</div>${contacts.map(c=>`<div class="t2 cv-ct-i">${c}</div>`).join('')}</div>
+      ${sideSkills}${sideCerts}
+    </div>
+    <div class="t2 cv-main" style="display:flex;flex-direction:column;gap:14px">${main}</div>`;
+}
+
+function tpl3HTML(name,title,contacts,stmt,certList){
+  const sections=secOrder.map(sec=>{
+    if(sec==='personal')return stmt?`<div class="t3 cv-section"><div class="t3 cv-sec-t">Profil</div><div class="t3 cv-edesc">${stmt}</div></div>`:'';
+    if(sec==='education')return`<div class="t3 cv-section"><div class="t3 cv-sec-t">Eğitim</div>${renderEntriesHTML('education','t3')}</div>`;
+    if(sec==='experience')return`<div class="t3 cv-section"><div class="t3 cv-sec-t">İş Deneyimi</div>${renderEntriesHTML('experience','t3')}</div>`;
+    if(sec==='skills')return skills.length?`<div class="t3 cv-section"><div class="t3 cv-sec-t">Yetenekler</div><div class="t3 cv-skills">${skills.map(s=>`<span class="t3 cv-sk">${s}</span>`).join('')}</div></div>`:'';
+    if(sec==='activities')return`<div class="t3 cv-section"><div class="t3 cv-sec-t">Aktivite & Ödüller</div>${renderEntriesHTML('activities','t3')}</div>`;
+    return'';
+  }).join('');
+  const certSec=certList.length?`<div class="t3 cv-section"><div class="t3 cv-sec-t">Sertifikalar</div>${certList.map(c=>`<div class="t3 cv-cert"><span>📜</span>${c.name}</div>`).join('')}</div>`:'';
+  return`
+    <div class="t3 cv-hd">
+      <div class="t3 cv-nm">${name}</div>
+      ${title?`<div class="t3 cv-tg">${title}</div>`:''}
+      <div class="t3 cv-ct">${contacts.map(c=>`<span>${c}</span>`).join('')}</div>
+    </div>
+    ${sections}${certSec}`;
+}
+
+// ═══════════════════════════════════
+// DOWNLOAD
+// ═══════════════════════════════════
+function downloadCV(){
+  showToast('"PDF olarak kaydet" seçeneğini seç 🖨️');
+  setTimeout(()=>window.print(),300);
+}
+
+// ═══════════════════════════════════
+// ADMIN PANEL
+// ═══════════════════════════════════
+
+// Palettes
+const PALETTES = [
+  {name:'Orman',accent:'#2d6a4f',ink:'#1a1a2e',paper:'#f7f7f5',mid:'#52b788'},
+  {name:'Okyanus',accent:'#1a6b9a',ink:'#0d1b2a',paper:'#f5f8fb',mid:'#4aa8d8'},
+  {name:'Mor',accent:'#6a3d9a',ink:'#1e1030',paper:'#f8f5ff',mid:'#9b6dca'},
+  {name:'Turuncu',accent:'#c45f1a',ink:'#2a1a0e',paper:'#fdf8f3',mid:'#e88c4a'},
+  {name:'Kırmızı',accent:'#b52b2b',ink:'#1e0a0a',paper:'#fdf5f5',mid:'#d96060'},
+  {name:'Gece',accent:'#38bdf8',ink:'#0f172a',paper:'#0f172a',mid:'#7dd3fc'},
+];
+
+// Section config
+let sectionConfig = [
+  {key:'personal', label:'Kişisel Bilgiler', icon:'👤', visible:true},
+  {key:'education', label:'Eğitim', icon:'🎓', visible:true},
+  {key:'experience', label:'İş Deneyimi', icon:'💼', visible:true},
+  {key:'skills', label:'Yetenekler', icon:'⚡', visible:true},
+  {key:'activities', label:'Aktivite & Ödüller', icon:'🏆', visible:true},
+];
+
+// Feature cards
+let featureCards = [
+  {icon:'📝', title:'Canlı CV Oluşturucu', desc:'Doldurdukça anlık önizleme'},
+  {icon:'🎨', title:'3 Profesyonel Tema', desc:'Classic, Modern, Elegant'},
+  {icon:'📜', title:'Sertifika Yönetimi', desc:'PDF & görsel dosya yükleme'},
+  {icon:'⬇️', title:'PDF İndir', desc:'Tek tıkla hazır belge'},
+];
+
+// Admin settings stored in localStorage
+let adminSettings = JSON.parse(localStorage.getItem('cc_admin') || '{}');
+
+function exitAdmin(){
+  showScreen('dashboard');
+}
+
+function adminPage(name){
+  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('apage-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(name==='kullanicilar') renderUsersTable();
+  if(name==='genel') updateStats();
+}
+
+function loadAdminData(){
+  applyAdminSettings();
+  updateStats();
+  renderPalettes();
+  renderSectionToggles();
+  renderFeatureEditor();
+  // load saved values into fields
+  const s = adminSettings;
+  if(s.name1) document.getElementById('cfg-name1').value = s.name1;
+  if(s.name2) document.getElementById('cfg-name2').value = s.name2;
+  if(s.tabTitle) document.getElementById('cfg-tab-title').value = s.tabTitle;
+  if(s.badge) document.getElementById('cfg-badge').value = s.badge;
+  if(s.h1a) document.getElementById('cfg-h1a').value = s.h1a;
+  if(s.h1b) document.getElementById('cfg-h1b').value = s.h1b;
+  if(s.heroP) document.getElementById('cfg-hero-p').value = s.heroP;
+  if(s.btn1) document.getElementById('cfg-btn1').value = s.btn1;
+  if(s.btn2) document.getElementById('cfg-btn2').value = s.btn2;
+  if(s.sectionConfig) sectionConfig = s.sectionConfig;
+  if(s.featureCards) featureCards = s.featureCards;
+  livePreviewUpdate();
+}
+
+function updateStats(){
+  const allUsers = Object.values(users);
+  document.getElementById('stat-users').textContent = allUsers.length;
+  document.getElementById('stat-certs').textContent = allUsers.reduce((a,u)=>a+(u.certs||[]).length,0);
+  document.getElementById('stat-cvs').textContent = allUsers.filter(u=>u.cvData&&u.cvData['f-name']).length;
+}
+
+function renderPalettes(){
+  const row = document.getElementById('palette-row');
+  row.innerHTML = PALETTES.map((p,i)=>`
+    <div class="palette" id="pal-${i}" onclick="applyPalette(${i})">
+      <div class="pal-dot" style="background:${p.ink}"></div>
+      <div class="pal-dot" style="background:${p.accent}"></div>
+      <div class="pal-dot" style="background:${p.mid}"></div>
+      <span class="pal-name">${p.name}</span>
+    </div>`).join('');
+}
+
+function applyPalette(i){
+  const p = PALETTES[i];
+  document.querySelectorAll('.palette').forEach((el,j)=>el.classList.toggle('active-pal',j===i));
+  applyColor('accent', p.accent);
+  applyColor('ink', p.ink);
+  applyColor('paper', p.paper);
+  applyColor('mid', p.mid);
+  showToast('🎨 '+p.name+' paleti uygulandı','success');
+}
+
+function applyColor(type, hex){
+  const varMap = {accent:'--accent', ink:'--ink', paper:'--paper', mid:'--accent-mid'};
+  document.documentElement.style.setProperty(varMap[type], hex);
+  const sw = document.getElementById('sw-'+type);
+  const hexEl = document.getElementById('hex-'+type);
+  const cp = document.getElementById('cp-'+type);
+  if(sw) sw.style.background = hex;
+  if(hexEl) hexEl.textContent = hex;
+  if(cp) cp.value = hex;
+  // also update accent-light as lighter version
+  if(type==='accent'){
+    document.documentElement.style.setProperty('--accent-light', hex+'22');
+  }
+  livePreviewUpdate();
+}
+
+function livePreviewUpdate(){
+  const n1 = document.getElementById('cfg-name1')?.value || 'Aca';
+  const n2 = document.getElementById('cfg-name2')?.value || 'dex';
+  const badge = document.getElementById('cfg-badge')?.value || '';
+  const h1a = document.getElementById('cfg-h1a')?.value || '';
+  const h1b = document.getElementById('cfg-h1b')?.value || '';
+  const heroP = document.getElementById('cfg-hero-p')?.value || '';
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
+  const prevLogo = document.getElementById('prev-logo');
+  if(prevLogo) prevLogo.innerHTML = `${n1}<span style="color:${accentColor}">${n2}</span>`;
+
+  const prevBadge = document.getElementById('prev-badge');
+  if(prevBadge){ prevBadge.textContent = badge; prevBadge.style.color = accentColor; }
+
+  const prevH1 = document.getElementById('prev-h1');
+  if(prevH1) prevH1.innerHTML = `${h1a}<br><em style="color:${accentColor}">${h1b}</em>`;
+
+  const prevP = document.getElementById('prev-p');
+  if(prevP) prevP.textContent = heroP.substring(0,80) + (heroP.length>80?'...':'');
+
+  // Update actual nav logo
+  document.querySelectorAll('.nav-logo').forEach(el => {
+    el.innerHTML = `${n1}<span>${n2}</span>`;
+  });
+  document.querySelectorAll('.modal-logo').forEach(el => {
+    el.innerHTML = `${n1}<span>${n2}</span>`;
+  });
+}
+
+function renderFeatureEditor(){
+  const cont = document.getElementById('features-editor');
+  cont.innerHTML = featureCards.map((f,i)=>`
+    <div style="display:grid;grid-template-columns:50px 1fr 1fr;gap:10px;margin-bottom:12px;padding:12px;background:var(--paper);border-radius:8px;border:1px solid var(--border)">
+      <div class="admin-field"><label>İkon</label><input value="${f.icon}" oninput="featureCards[${i}].icon=this.value" style="text-align:center;font-size:18px"></div>
+      <div class="admin-field"><label>Başlık</label><input value="${f.title}" oninput="featureCards[${i}].title=this.value"></div>
+      <div class="admin-field"><label>Açıklama</label><input value="${f.desc}" oninput="featureCards[${i}].desc=this.value"></div>
+    </div>`).join('');
+}
+
+function renderSectionToggles(){
+  const cont = document.getElementById('section-toggles');
+  cont.innerHTML = sectionConfig.map((s,i)=>`
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-label">${s.icon} <input value="${s.label}" oninput="sectionConfig[${i}].label=this.value" style="border:none;background:none;font-size:13px;font-weight:500;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;width:200px"></div>
+        <div class="toggle-sub">CV'de "${s.key}" bölümü</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" ${s.visible?'checked':''} onchange="sectionConfig[${i}].visible=this.checked;applySectionVisibility()">
+        <span class="slider"></span>
+      </label>
+    </div>`).join('');
+}
+
+function applySectionVisibility(){
+  sectionConfig.forEach(s=>{
+    const panel = document.getElementById('panel-'+s.key);
+    if(panel) panel.style.display = s.visible ? '' : 'none';
+    const ptitle = panel?.querySelector('.p-title');
+    if(ptitle) ptitle.textContent = s.label;
+  });
+}
+
+function saveAdminSettings(){
+  adminSettings = {
+    name1: document.getElementById('cfg-name1').value,
+    name2: document.getElementById('cfg-name2').value,
+    tabTitle: document.getElementById('cfg-tab-title').value,
+    badge: document.getElementById('cfg-badge').value,
+    h1a: document.getElementById('cfg-h1a').value,
+    h1b: document.getElementById('cfg-h1b').value,
+    heroP: document.getElementById('cfg-hero-p').value,
+    btn1: document.getElementById('cfg-btn1').value,
+    btn2: document.getElementById('cfg-btn2').value,
+    sectionConfig,
+    featureCards,
+    colors:{
+      accent: document.getElementById('cp-accent').value,
+      ink: document.getElementById('cp-ink').value,
+      paper: document.getElementById('cp-paper').value,
+      mid: document.getElementById('cp-mid').value,
+    }
+  };
+  localStorage.setItem('cc_admin', JSON.stringify(adminSettings));
+  applyAdminSettings();
+  showToast('✓ Ayarlar kaydedildi!','success');
+}
+
+function applyAdminSettings(){
+  const s = adminSettings;
+  if(!s || !Object.keys(s).length) return;
+
+  // Sayfa başlığı
+  if(s.tabTitle) document.title = s.tabTitle;
+
+  // Renkler — CSS değişkenleri her zaman çalışır
+  if(s.colors){
+    const c = s.colors;
+    if(c.accent){
+      document.documentElement.style.setProperty('--accent', c.accent);
+      document.documentElement.style.setProperty('--accent-light', c.accent+'22');
+      // renk seçici swatch güncelle (admin paneli açıksa)
+      const sw=document.getElementById('sw-accent'); if(sw) sw.style.background=c.accent;
+      const hx=document.getElementById('hex-accent'); if(hx) hx.textContent=c.accent;
+      const cp=document.getElementById('cp-accent'); if(cp) cp.value=c.accent;
+    }
+    if(c.ink){
+      document.documentElement.style.setProperty('--ink', c.ink);
+      const sw=document.getElementById('sw-ink'); if(sw) sw.style.background=c.ink;
+      const hx=document.getElementById('hex-ink'); if(hx) hx.textContent=c.ink;
+      const cp=document.getElementById('cp-ink'); if(cp) cp.value=c.ink;
+    }
+    if(c.paper){
+      document.documentElement.style.setProperty('--paper', c.paper);
+      const sw=document.getElementById('sw-paper'); if(sw) sw.style.background=c.paper;
+      const hx=document.getElementById('hex-paper'); if(hx) hx.textContent=c.paper;
+      const cp=document.getElementById('cp-paper'); if(cp) cp.value=c.paper;
+    }
+    if(c.mid){
+      document.documentElement.style.setProperty('--accent-mid', c.mid);
+      const sw=document.getElementById('sw-mid'); if(sw) sw.style.background=c.mid;
+      const hx=document.getElementById('hex-mid'); if(hx) hx.textContent=c.mid;
+      const cp=document.getElementById('cp-mid'); if(cp) cp.value=c.mid;
+    }
+  }
+
+  // Site adı — nav logo ve modal logolar
+  const n1 = s.name1 || 'Aca';
+  const n2 = s.name2 || 'dex';
+  document.querySelectorAll('.nav-logo, .modal-logo, .admin-nav-logo-text').forEach(el => {
+    el.innerHTML = `${n1}<span>${n2}</span>`;
+  });
+
+  // Hero metinleri
+  const heroBadge = document.querySelector('.hero-badge');
+  if(heroBadge && s.badge) heroBadge.textContent = s.badge;
+
+  const heroH1 = document.querySelector('.hero h1');
+  if(heroH1 && (s.h1a || s.h1b))
+    heroH1.innerHTML = `${s.h1a||'Kariyerini'}<br><em>${s.h1b||'şimdiden inşa et.'}</em>`;
+
+  const heroP = document.querySelector('.hero p');
+  if(heroP && s.heroP) heroP.textContent = s.heroP;
+
+  const btn1 = document.querySelector('.btn-hero-primary');
+  if(btn1 && s.btn1) btn1.textContent = s.btn1;
+
+  const btn2 = document.querySelector('.btn-hero-secondary');
+  if(btn2 && s.btn2) btn2.textContent = s.btn2;
+
+  // Özellik kartları
+  if(s.featureCards){
+    const feats = document.querySelectorAll('.feat');
+    s.featureCards.forEach((f,i)=>{
+      if(!feats[i]) return;
+      const ic = feats[i].querySelector('.feat-icon'); if(ic) ic.textContent = f.icon;
+      const ti = feats[i].querySelector('.feat-title'); if(ti) ti.textContent = f.title;
+      const de = feats[i].querySelector('.feat-desc'); if(de) de.textContent = f.desc;
+    });
+  }
+
+  // Bölüm görünürlüğü
+  if(s.sectionConfig){
+    sectionConfig = s.sectionConfig;
+    applySectionVisibility();
+  }
+}
+
+function renderUsersTable(){
+  const tbody = document.getElementById('users-tbody');
+  const allUsers = Object.values(users);
+  if(!allUsers.length){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--ink-muted)">Henüz kayıtlı öğrenci yok</td></tr>';
+    return;
+  }
+  tbody.innerHTML = allUsers.map(u=>`
+    <tr>
+      <td><div class="user-cell"><div class="user-avatar-sm">${u.name.charAt(0).toUpperCase()}</div><div><div style="font-weight:600;font-size:13px">${u.name}</div><div style="font-size:11px;color:var(--ink-muted)">${u.school||'—'}</div></div></div></td>
+      <td style="color:var(--ink-light)">${u.email}</td>
+      <td style="color:var(--ink-light)">${u.dept||'—'}</td>
+      <td><span style="font-weight:600;color:var(--accent)">${(u.certs||[]).length}</span></td>
+      <td><span class="status-badge active">Aktif</span></td>
+      <td>${u.email===ADMIN_EMAIL?'<span style="font-size:11px;color:var(--ink-muted)">Admin</span>':`<button class="admin-del-btn" onclick="deleteUser('${u.email}')">Sil</button>`}</td>
+    </tr>`).join('');
+}
+
+function deleteUser(email){
+  if(!confirm(email+' kullanıcısını silmek istediğinize emin misiniz?')) return;
+  delete users[email];
+  localStorage.setItem('cc_users', JSON.stringify(users));
+  renderUsersTable();
+  updateStats();
+  showToast('Kullanıcı silindi.');
+}
+
+// ═══════════════════════════════════
+// TOAST
+// ═══════════════════════════════════
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.className='toast'+(type?' '+type:'');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>
